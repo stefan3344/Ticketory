@@ -6,7 +6,7 @@
 | Whole solution starts with Docker Compose | Done | `docker-compose.yml` with 15 services and health checks. | `docker compose up -d --build`. |
 | Web application (ASP.NET) | Done | `Ticketory.Api` — MVC UI + REST API, .NET 10. | <https://localhost>. |
 | Database (PostgreSQL) | Done | `Ticketory.Infrastructure/Persistence/AppDbContext.cs`, EF Core migrations. | Data persists in the `postgres-data` volume. |
-| Second data store (Redis) | Done | Cache-aside, distributed locks and Data Protection keys. | Event pages are served from cache; stock is protected by a lock. |
+| Second data store (Redis) | Done | Cache for fast data access, distributed locks and Data Protection keys. | Event pages are served from cache; stock is protected by a lock. |
 | Load balancer in front of at least two replicas | Done | Nginx `least_conn` upstream with `api-1` and `api-2`. | Response header `X-Served-By` alternates between `api-1` and `api-2`. |
 | Monitoring | Done | Prometheus + Grafana + node-exporter + cAdvisor + PostgreSQL/Redis/RabbitMQ exporters + Dozzle. | Grafana dashboard, `/metrics`, Dozzle logs, health checks. |
 | HTTPS with a self-signed certificate | Done | `scripts/gen-certs.sh`, Nginx TLS termination, HTTP→HTTPS redirect, HSTS. | Open <https://localhost> and accept the certificate. |

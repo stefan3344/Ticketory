@@ -51,8 +51,8 @@
 <h2 id="architecture">Architecture</h2>
 <ul>
 <li>Nginx: HTTPS + load balancing</li>
-<li>PostgreSQL: source of truth</li>
-<li>Redis: cache, locks, Data Protection keys</li>
+<li>PostgreSQL: database and transactions</li>
+<li>Redis: cache and fast data access</li>
 <li>RabbitMQ: asynchronous order flow</li>
 </ul>
 </section>
@@ -110,11 +110,11 @@
 </tr>
 <tr>
 <td>PostgreSQL</td>
-<td>Transactions, constraints, stock integrity</td>
+<td>Database and transactions</td>
 </tr>
 <tr>
 <td>Redis</td>
-<td>Cache, distributed lock, shared Data Protection keys</td>
+<td>Cache and fast data access</td>
 </tr>
 <tr>
 <td>RabbitMQ</td>
@@ -130,7 +130,7 @@
 </tr>
 <tr>
 <td>Docker Compose</td>
-<td>One-command reproducible stack</td>
+<td>Container isolation and reproducible service environments</td>
 </tr>
 </tbody>
 </table>
@@ -194,7 +194,6 @@
 <li>Nginx terminates TLS, redirects HTTP→HTTPS, adds HSTS and security headers.</li>
 <li>Two API replicas with <code>least_conn</code> and passive health checks.</li>
 <li><code>X-Served-By</code> proves which replica served the request.</li>
-<li>Keepalived and Corosync/Pacemaker are documented but intentionally not implemented: they require real Linux VMs, VRRP/quorum and fencing, which are outside the Docker scope.</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="default" data-style="section {

@@ -22,7 +22,7 @@ The application follows a pragmatic layered structure:
 | `api-1`, `api-2` | ASP.NET Core MVC UI + REST API. Two replicas behind Nginx. | `appsettings*.json`, `Database__Password`, `Redis__Password`, `RabbitMq__Password`, `Jwt__Secret`, `Seed__*Password`, `Instance__Id` |
 | `worker` | Publishes outbox messages, consumes RabbitMQ messages, issues tickets and sends e-mail. | `appsettings*.json`, `Database__Password`, `Redis__Password`, `RabbitMq__Password` |
 | `postgres` | Primary data store (events, orders, tickets, Identity). | `POSTGRES_DB`/`POSTGRES_USER` (Compose), `POSTGRES_PASSWORD` (`.env`) |
-| `redis` | Cache, distributed locks and Data Protection key storage. | `REDIS_PASSWORD` (`.env`) |
+| `redis` | Cache and fast data access; distributed locks; Data Protection key storage. | `REDIS_PASSWORD` (`.env`) |
 | `rabbitmq` | Topic exchange `ticketory.events`, retry exchange/queues, dead-letter exchange/queue. | `RABBITMQ_DEFAULT_USER` (Compose), `RABBITMQ_DEFAULT_PASS` (`.env`), `rabbitmq/enabled_plugins` |
 | `mailpit` | SMTP sink and web UI for the ticket e-mails. | ports 1025/8025 |
 | `prometheus` | Scrapes API and infrastructure metrics. | `monitoring/prometheus/` |

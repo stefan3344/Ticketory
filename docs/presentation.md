@@ -35,8 +35,8 @@ A containerised, monitored and tested solution with two API replicas and asynchr
 ## Architecture
 
 - Nginx: HTTPS + load balancing
-- PostgreSQL: source of truth
-- Redis: cache, locks, Data Protection keys
+- PostgreSQL: database and transactions
+- Redis: cache and fast data access
 - RabbitMQ: asynchronous order flow
 
 ---
@@ -59,12 +59,12 @@ A containerised, monitored and tested solution with two API replicas and asynchr
 |---|---|
 | ASP.NET Core MVC + Identity | CRUD UI, roles, secure cookies |
 | REST API + JWT | Integration surface, Swagger |
-| PostgreSQL | Transactions, constraints, stock integrity |
-| Redis | Cache, distributed lock, shared Data Protection keys |
+| PostgreSQL | Database and transactions |
+| Redis | Cache and fast data access |
 | RabbitMQ | Payment, ticket issuance, e-mail, retry/DLQ |
 | Nginx | HTTPS, load balancing, rate limiting |
 | Prometheus + Grafana | Metrics, dashboards, alerts |
-| Docker Compose | One-command reproducible stack |
+| Docker Compose | Container isolation and reproducible service environments |
 
 ---
 
@@ -109,7 +109,6 @@ Order created
 - Nginx terminates TLS, redirects HTTP→HTTPS, adds HSTS and security headers.
 - Two API replicas with `least_conn` and passive health checks.
 - `X-Served-By` proves which replica served the request.
-- Keepalived and Corosync/Pacemaker are documented but intentionally not implemented: they require real Linux VMs, VRRP/quorum and fencing, which are outside the Docker scope.
 
 ---
 

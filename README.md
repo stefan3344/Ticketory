@@ -53,7 +53,7 @@ Details: [Local Docker quick start](#local-docker-quick-start) · [GitHub Codesp
 
 - **ASP.NET Core 10 MVC UI + REST API** with ASP.NET Core Identity and JWT.
 - **Two API replicas** behind **Nginx** (TLS termination, load balancing, rate limiting).
-- **PostgreSQL** as the source of truth, **Redis** for cache, distributed locks and Data Protection keys.
+- **PostgreSQL** as the database and source of truth; **Redis** for cache and fast data access, plus distributed locks and Data Protection keys.
 - **RabbitMQ** with an outbox publisher, retry queues, dead-letter queue and idempotent consumers.
 - **Mailpit** captures the ticket e-mails so the asynchronous flow can be demonstrated end-to-end.
 - **Cancellation and refund flow**: pending orders are cancelled, paid orders are refunded, and separate customer e-mails are sent.
@@ -74,7 +74,7 @@ The class diagram is available at [`docs/class-diagram.svg`](docs/class-diagram.
 ### Request and event flow
 
 1. The browser calls `https://localhost`. Nginx terminates TLS and forwards the request to one of the API replicas (`least_conn`).
-2. The API uses PostgreSQL for persistent data and Redis for cache/locks.
+2. The API uses PostgreSQL for persistent data and transactions, and Redis for cache and fast data access (plus locks for reservations).
 3. Creating an order:
    - the API acquires a Redis lock per ticket type,
    - reserves stock inside a PostgreSQL transaction,
@@ -96,11 +96,11 @@ The class diagram is available at [`docs/class-diagram.svg`](docs/class-diagram.
 |---|---|
 | ASP.NET Core MVC + Identity | Server-rendered CRUD UI, roles (Admin / Organizer / Customer) and secure cookie authentication. |
 | ASP.NET Core REST API + JWT | Machine-friendly API for the same domain, documented with Swagger/OpenAPI. |
-| PostgreSQL | Transactions, unique constraints, referential integrity and reliable storage of orders and stock. |
-| Redis | Cache-aside for event listings/details, distributed lock against overselling, shared Data Protection keys between replicas. |
+| PostgreSQL | Database and transactions: unique constraints, referential integrity and reliable storage of orders and stock. |
+| Redis | Cache and fast data access; distributed lock against overselling; shared Data Protection keys between replicas. |
 | RabbitMQ | Asynchronous payment, ticket issuance and notification; retry and dead-letter handling. |
 | Nginx | Single HTTPS entry point, load balancing over two replicas, rate limiting, security headers. |
-| Docker Compose | Reproducible one-command startup of the entire stack. |
+| Docker Compose | Container isolation and reproducible service environments. |
 | Prometheus + Grafana | Metrics, dashboards and alert rules for the API, PostgreSQL, Redis, RabbitMQ and containers. |
 | Dozzle | Browser-based container log viewer for the demo. |
 | xUnit + FluentAssertions + WebApplicationFactory + Testcontainers | Domain unit tests and API integration tests against a real PostgreSQL container. |
