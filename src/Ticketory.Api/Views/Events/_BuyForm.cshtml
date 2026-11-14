@@ -1,0 +1,22 @@
+@model BuyTicketsViewModel
+
+<form asp-action="Buy" asp-route-id="@Model.EventId" method="post">
+    <input type="hidden" asp-for="EventId" />
+    <input type="hidden" asp-for="IdempotencyKey" />
+
+    @for (var i = 0; i < Model.Items.Count; i++)
+    {
+        <input type="hidden" asp-for="Items[i].TicketTypeId" />
+        <div class="border rounded p-2 mb-2">
+            <div class="d-flex justify-content-between">
+                <span class="fw-semibold">@Model.Items[i].Name</span>
+                <span>€@Model.Items[i].Price.ToString("0.00")</span>
+            </div>
+            <small class="text-muted">@Model.Items[i].Available available</small>
+            <input asp-for="Items[i].Quantity" type="number" min="0" max="20" class="form-control form-control-sm mt-1" />
+        </div>
+    }
+
+    <button class="btn btn-primary w-100" type="submit" @(Model.Items.All(i => i.Available == 0) ? "disabled" : "")>Buy tickets</button>
+    <p class="small text-muted mt-2 mb-0">Tickets will appear under 'My orders' after payment.</p>
+</form>

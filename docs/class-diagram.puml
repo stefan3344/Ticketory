@@ -1,0 +1,406 @@
+@startuml class-diagram
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+hide circle
+title Ticketory - class diagram
+
+package "Identity" {
+  class ApplicationUser {
+    +Id : Guid
+    +Email : string
+    +FullName : string
+    +CreatedAt : DateTime
+  }
+  class IdentityUser
+  ApplicationUser --|> IdentityUser
+}
+
+package "Domain" {
+  class Venue {
+    +Id : Guid
+    +Name : string
+    +Address : string
+    +City : string
+    +Capacity : int
+    +CreatedAt : DateTime
+  }
+
+  class Event {
+    +Id : Guid
+    +Title : string
+    +Description : string
+    +StartsAt : DateTime
+    +EndsAt : DateTime?
+    +ImageUrl : string?
+    +VenueId : Guid
+    +OrganizerId : Guid
+    +Status : EventStatus
+    +CreatedAt : DateTime
+    +IsSoldOut : bool
+    +AverageRating : double
+    +Publish(utcNow : DateTime) : void
+    +Cancel() : void
+    +Reopen(utcNow : DateTime) : void
+  }
+
+  class TicketType {
+    +Id : Guid
+    +EventId : Guid
+    +Name : string
+    +Price : decimal
+    +Capacity : int
+    +Sold : int
+    +Available : int
+    +IsSoldOut : bool
+    +Reserve(quantity : int) : void
+    +Release(quantity : int) : void
+  }
+
+  class Order {
+    +Id : Guid
+    +CustomerId : Guid
+    +Status : OrderStatus
+    +TotalAmount : decimal
+    +CreatedAt : DateTime
+    +PaidAt : DateTime?
+    +CancelledAt : DateTime?
+    +CancellationReason : string?
+    +RefundedAt : DateTime?
+    +RefundReason : string?
+    +IdempotencyKey : string?
+    +FailureReason : string?
+    +AddItem(ticketType : TicketType, quantity : int) : OrderItem
+    +RecalculateTotal() : void
+    +MarkPaid(utcNow : DateTime) : void
+    +MarkFailed(reason : string) : void
+    +Cancel(utcNow : DateTime, reason : string) : void
+    +Refund(utcNow : DateTime, reason : string) : void
+  }
+
+  class OrderItem {
+    +Id : Guid
+    +OrderId : Guid
+    +TicketTypeId : Guid
+    +Quantity : int
+    +UnitPrice : decimal
+    +LineTotal : decimal
+  }
+
+  class Payment {
+    +Id : Guid
+    +OrderId : Guid
+    +Amount : decimal
+    +Status : PaymentStatus
+    +Provider : string
+    +TransactionReference : string?
+    +CreatedAt : DateTime
+    +CompletedAt : DateTime?
+    +RefundedAt : DateTime?
+    +RefundReference : string?
+    +Refund(utcNow : DateTime, reference : string) : void
+  }
+
+  class Ticket {
+    +Id : Guid
+    +OrderId : Guid
+    +TicketTypeId : Guid
+    +Code : string
+    +Status : TicketStatus
+    +IssuedAt : DateTime
+    +Cancel() : void
+  }
+
+  class EventReview {
+    +Id : Guid
+    +EventId : Guid
+    +CustomerId : Guid
+    +CustomerName : string
+    +Rating : int
+    +Comment : string?
+    +CreatedAt : DateTime
+    +Create(eventId, customerId, rating, comment, createdAt) : EventReview
+  }
+
+  class OutboxMessage {
+    +Id : Guid
+    +Type : string
+    +Payload : string
+    +OccurredOn : DateTime
+    +ProcessedOn : DateTime?
+    +Error : string?
+    +RetryCount : int
+  }
+
+  enum EventStatus {
+    Draft
+    Published
+    Cancelled
+    Completed
+  }
+
+  enum OrderStatus {
+    Pending
+    Paid
+    Cancelled
+    Failed
+    Refunded
+  }
+
+  enum PaymentStatus {
+    Pending
+    Succeeded
+    Failed
+    Refunded
+  }
+
+  enum TicketStatus {
+    Issued
+    CheckedIn
+    Cancelled
+  }
+}
+
+package "Application" {
+  interface IAppDbContext {
+    +Venues : DbSet<Venue>
+    +Events : DbSet<Event>
+    +TicketTypes : DbSet<TicketType>
+    +Orders : DbSet<Order>
+    +Payments : DbSet<Payment>
+    +Tickets : DbSet<Ticket>
+    +Reviews : DbSet<EventReview>
+    +OutboxMessages : DbSet<OutboxMessage>
+    +SaveChangesAsync() : Task<int>
+  }
+
+  interface ICacheService {
+    +GetAsync<T>(key) : Task<T?>
+    +SetAsync<T>(key, value, ttl) : Task
+    +GetOrSetAsync<T>(key, factory, ttl) : Task<T>
+    +RemoveAsync(key) : Task
+  }
+
+  interface IDistributedLock {
+    +AcquireAsync(key, expiry, wait) : Task<IAsyncDisposable>
+  }
+
+  interface IEventBus {
+    +PublishAsync(routingKey, payload) : Task
+  }
+
+  interface IMessageHandler {
+    +QueueName : string
+    +RoutingKey : string
+    +HandleAsync(payload, ct) : Task
+  }
+
+  interface IEmailSender {
+    +SendAsync(to, subject, htmlBody, ct) : Task
+  }
+
+  interface IQrCodeGenerator {
+    +GenerateSvg(payload) : string
+  }
+
+  interface IUserDirectory {
+    +GetDisplayNameAsync(userId) : Task<string?>
+    +GetEmailAsync(userId) : Task<string?>
+  }
+
+  class EventService {
+    -db : IAppDbContext
+    -cache : ICacheService
+    -timeProvider : TimeProvider
+    +GetPublishedEventsAsync(search, page, pageSize) : Task<PagedResult<EventListItemDto>>
+    +GetManagedEventsAsync(actorId, isAdmin) : Task<IReadOnlyList<EventListItemDto>>
+    +GetEventDetailsAsync(id) : Task<EventDetailsDto?>
+    +CreateEventAsync(organizerId, request) : Task<EventDetailsDto>
+    +UpdateEventAsync(id, actorId, isAdmin, request) : Task
+    +DeleteEventAsync(id, actorId, isAdmin) : Task
+    +PublishEventAsync(id, actorId, isAdmin) : Task
+    +CancelEventAsync(id, actorId, isAdmin) : Task
+  }
+
+  class VenueService {
+    +GetAllAsync() : Task<IReadOnlyList<VenueDto>>
+    +GetByIdAsync(id) : Task<VenueDto?>
+    +CreateAsync(request) : Task<VenueDto>
+    +UpdateAsync(id, request) : Task
+    +DeleteAsync(id) : Task
+  }
+
+  class TicketTypeService {
+    +GetForEventAsync(eventId) : Task<IReadOnlyList<TicketTypeDto>>
+    +GetByIdAsync(id) : Task<TicketTypeDto?>
+    +CreateAsync(actorId, isAdmin, request) : Task<TicketTypeDto>
+    +UpdateAsync(id, actorId, isAdmin, request) : Task
+    +DeleteAsync(id, actorId, isAdmin) : Task
+  }
+
+  class OrderService {
+    -db : IAppDbContext
+    -cache : ICacheService
+    -lock : IDistributedLock
+    -userDirectory : IUserDirectory
+    -timeProvider : TimeProvider
+    +CreateOrderAsync(customerId, request, idempotencyKey) : Task<OrderDto>
+    +GetMyOrdersAsync(customerId) : Task<IReadOnlyList<OrderDto>>
+    +GetAllOrdersAsync(take) : Task<IReadOnlyList<OrderDto>>
+    +GetOrderAsync(id, customerId, isAdmin) : Task<OrderDto?>
+    +GetTicketByCodeAsync(code, customerId, isAdmin) : Task<TicketDto?>
+    +CancelOrderAsync(id, customerId, isAdmin) : Task<OrderDto>
+  }
+
+  class ReviewService {
+    -timeProvider : TimeProvider
+    +GetForEventAsync(eventId) : Task<IReadOnlyList<ReviewDto>>
+    +CanReviewAsync(eventId, customerId) : Task<bool>
+    +AddAsync(eventId, customerId, customerName, request) : Task<ReviewDto>
+  }
+
+  class StatsService {
+    +GetDashboardStatsAsync() : Task<DashboardStatsDto>
+  }
+
+  class OutboxService {
+    +GetMessagesAsync(type, processed, page, pageSize) : Task<PagedResult<OutboxMessageDto>>
+    +GetMessageTypesAsync() : Task<IReadOnlyList<string>>
+  }
+}
+
+package "Framework" {
+  class TimeProvider <<framework>> {
+    +GetUtcNow() : DateTimeOffset
+    +GetTimestamp() : long
+    +GetElapsedTime(startingTimestamp : long) : TimeSpan
+  }
+}
+
+package "Infrastructure" {
+  class AppDbContext
+  class RedisCacheService
+  class RedisDistributedLock
+  class RabbitMqEventBus
+  class RabbitMqConnection
+  class RabbitMqConsumerHostedService
+  class OutboxPublisherService
+  class OrderCreatedConsumer
+  class PaymentSucceededConsumer
+  class PaymentFailedConsumer
+  class TicketsIssuedConsumer
+  class OrderCancelledConsumer
+  class OrderRefundedConsumer
+  class SmtpEmailSender
+  class QrCodeGenerator
+  class UserDirectory
+  class DbInitializer
+}
+
+package "API" {
+  class EventsController
+  class OrdersController
+  class VenuesController
+  class TicketTypesController
+  class TicketsController
+  class AdminController
+  class AccountController
+  class EventsApiController
+  class OrdersApiController
+  class TicketsApiController
+  class ReviewsApiController
+  class AuthApiController
+  class DashboardApiController
+}
+
+' ---------- Domain relationships ----------
+Venue "1" o-- "0..*" Event : hosts >
+Event "1" *-- "1..*" TicketType : offers >
+Event "1" *-- "0..*" EventReview : receives >
+Order "1" *-- "1..*" OrderItem : contains >
+Order "1" *-- "0..*" Ticket : issues >
+Order "1" -- "0..1" Payment : has >
+TicketType "1" -- "0..*" OrderItem : referenced by >
+TicketType "1" -- "0..*" Ticket : defines >
+ApplicationUser "1" -- "0..*" Event : organizes >
+ApplicationUser "1" -- "0..*" Order : places >
+ApplicationUser "1" -- "0..*" EventReview : writes >
+
+' ---------- Service dependencies ----------
+EventService ..> IAppDbContext
+EventService ..> ICacheService
+EventService ..> IUserDirectory
+EventService ..> TimeProvider
+VenueService ..> IAppDbContext
+VenueService ..> ICacheService
+TicketTypeService ..> IAppDbContext
+TicketTypeService ..> ICacheService
+OrderService ..> IAppDbContext
+OrderService ..> ICacheService
+OrderService ..> IDistributedLock
+OrderService ..> IUserDirectory
+OrderService ..> TimeProvider
+ReviewService ..> IAppDbContext
+ReviewService ..> ICacheService
+ReviewService ..> TimeProvider
+StatsService ..> IAppDbContext
+StatsService ..> ICacheService
+OutboxService ..> IAppDbContext
+
+' ---------- Infrastructure implementations ----------
+AppDbContext ..|> IAppDbContext
+RedisCacheService ..|> ICacheService
+RedisDistributedLock ..|> IDistributedLock
+RabbitMqEventBus ..|> IEventBus
+SmtpEmailSender ..|> IEmailSender
+QrCodeGenerator ..|> IQrCodeGenerator
+UserDirectory ..|> IUserDirectory
+OrderCreatedConsumer ..|> IMessageHandler
+PaymentSucceededConsumer ..|> IMessageHandler
+PaymentFailedConsumer ..|> IMessageHandler
+TicketsIssuedConsumer ..|> IMessageHandler
+OrderCancelledConsumer ..|> IMessageHandler
+OrderRefundedConsumer ..|> IMessageHandler
+
+RabbitMqEventBus --> RabbitMqConnection
+RabbitMqConsumerHostedService --> RabbitMqConnection
+RabbitMqConsumerHostedService --> IMessageHandler : dispatches
+OutboxPublisherService --> IEventBus : publishes
+OutboxPublisherService --> IAppDbContext
+OutboxPublisherService --> TimeProvider
+OrderCreatedConsumer --> IAppDbContext
+OrderCreatedConsumer --> TimeProvider
+PaymentSucceededConsumer --> IAppDbContext
+PaymentSucceededConsumer --> TimeProvider
+PaymentFailedConsumer --> IAppDbContext
+TicketsIssuedConsumer --> IAppDbContext
+TicketsIssuedConsumer --> IEmailSender
+TicketsIssuedConsumer --> IQrCodeGenerator
+OrderCancelledConsumer --> IEmailSender
+OrderRefundedConsumer --> IEmailSender
+RedisDistributedLock --> TimeProvider
+DbInitializer --> TimeProvider
+
+' ---------- API dependencies ----------
+EventsController ..> EventService
+EventsController ..> OrderService
+EventsController ..> ReviewService
+EventsController ..> VenueService
+OrdersController ..> OrderService
+VenuesController ..> VenueService
+TicketTypesController ..> TicketTypeService
+TicketTypesController ..> EventService
+TicketsController ..> OrderService
+TicketsController ..> IQrCodeGenerator
+AdminController ..> StatsService
+AdminController ..> OutboxService
+AccountController ..> ApplicationUser
+EventsApiController ..> EventService
+OrdersApiController ..> OrderService
+TicketsApiController ..> OrderService
+TicketsApiController ..> IQrCodeGenerator
+ReviewsApiController ..> ReviewService
+AuthApiController ..> ApplicationUser
+DashboardApiController ..> StatsService
+
+@enduml

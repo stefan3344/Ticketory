@@ -1,0 +1,43 @@
+@model EventFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+<div class="mb-3">
+    <label asp-for="Title" class="form-label"></label>
+    <input asp-for="Title" class="form-control" />
+    <span asp-validation-for="Title" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Description" class="form-label"></label>
+    <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+    <span asp-validation-for="Description" class="text-danger"></span>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="StartsAt" class="form-label"></label>
+        <input asp-for="StartsAt" type="datetime-local" class="form-control" />
+        <span asp-validation-for="StartsAt" class="text-danger"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="EndsAt" class="form-label"></label>
+        <input asp-for="EndsAt" type="datetime-local" class="form-control" />
+        <span asp-validation-for="EndsAt" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label asp-for="VenueId" class="form-label"></label>
+    <select asp-for="VenueId" class="form-select"
+            asp-items="@(new SelectList(Model.Venues, nameof(VenueDto.Id), nameof(VenueDto.Name), Model.VenueId))">
+        <option value="">-- select a venue --</option>
+    </select>
+    <span asp-validation-for="VenueId" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="ImageUrl" class="form-label"></label>
+    <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+</div>

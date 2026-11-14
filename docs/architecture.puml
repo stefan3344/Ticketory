@@ -1,0 +1,45 @@
+@startuml architecture
+skinparam componentStyle rectangle
+skinparam shadowing false
+title Ticketory - deployment architecture
+
+actor "User" as user
+component "Browser" as browser
+
+node "Docker host (Docker Compose)" {
+  component "Nginx\nTLS termination\nload balancer" as nginx
+  component "API replica 1\nASP.NET Core MVC + REST" as api1
+  component "API replica 2\nASP.NET Core MVC + REST" as api2
+  component "Worker\noutbox publisher + consumers" as worker
+  database "PostgreSQL" as pg
+  database "Redis\ncache + locks + data protection keys" as redis
+  queue "RabbitMQ" as rabbit
+  component "Mailpit\nSMTP + web UI" as mail
+
+  node "Monitoring" {
+    component "Prometheus" as prom
+    component "Grafana" as grafana
+    component "Dozzle" as dozzle
+    component "Exporters\nnode, cAdvisor, postgres, redis, rabbitmq" as exporters
+  }
+}
+
+user --> browser
+browser --> nginx : HTTPS (self-signed)
+nginx --> api1 : HTTP
+nginx --> api2 : HTTP
+api1 --> pg
+api2 --> pg
+api1 --> redis
+api2 --> redis
+api1 --> rabbit
+api2 --> rabbit
+worker --> pg
+worker --> rabbit
+worker --> mail
+prom --> api1 : /metrics
+prom --> api2 : /metrics
+prom --> exporters
+grafana --> prom
+dozzle --> worker : docker logs
+@enduml

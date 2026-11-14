@@ -1,0 +1,10 @@
+@{
+    ViewData["Title"] = "Request error";
+    var code = ViewBag.StatusCode ?? 500;
+}
+
+<div class="text-center py-5">
+    <h1 class="display-4">@code</h1>
+    <p class="lead">The request could not be completed.</p>
+    <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to events</a>
+</div>

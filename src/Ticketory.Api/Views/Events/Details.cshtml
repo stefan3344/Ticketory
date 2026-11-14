@@ -1,0 +1,165 @@
+@model EventDetailsPageViewModel
+@{
+    ViewData["Title"] = Model.Event.Title;
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                        <h1 class="h2 mb-1">@Model.Event.Title</h1>
+                        <p class="text-muted mb-1">@Model.Event.StartsAt.ToLocalTime().ToString("dddd, dd MMMM yyyy HH:mm")</p>
+                        <p class="text-muted mb-0">@Model.Event.VenueName, @Model.Event.Address, @Model.Event.City</p>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge @(Model.Event.Status == EventStatus.Published ? "bg-success" : Model.Event.Status == EventStatus.Draft ? "bg-secondary" : Model.Event.Status == EventStatus.Cancelled ? "bg-danger" : "bg-info")">
+                            @Model.Event.Status
+                        </span>
+                        <div class="rating-stars fs-5 mt-1">★ @Model.Event.AverageRating.ToString("0.0")</div>
+                        <small class="text-muted">@Model.Event.Reviews.Count review(s)</small>
+                    </div>
+                </div>
+
+                <hr />
+                <p class="pre-line mb-0">@Model.Event.Description</p>
+
+                @if (Model.CanManage)
+                {
+                    <div class="d-flex gap-2 flex-wrap mt-4">
+                        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Event.Id">Edit</a>
+                        <a class="btn btn-outline-secondary" asp-controller="TicketTypes" asp-action="Index" asp-route-eventId="@Model.Event.Id">Ticket types</a>
+                        @if (Model.Event.Status == EventStatus.Draft)
+                        {
+                            <form asp-action="Publish" asp-route-id="@Model.Event.Id" method="post">
+                                <button type="submit" class="btn btn-success">Publish</button>
+                            </form>
+                        }
+                        @if (Model.Event.Status == EventStatus.Cancelled)
+                        {
+                            <form asp-action="Reopen" asp-route-id="@Model.Event.Id" method="post" onsubmit="return confirm('Reopen this event as a draft?');">
+                                <button type="submit" class="btn btn-outline-success">Reopen as draft</button>
+                            </form>
+                        }
+                        @if (Model.CanCancel)
+                        {
+                            <form asp-action="Cancel" asp-route-id="@Model.Event.Id" method="post" onsubmit="return confirm('Cancel this event? Pending orders will be cancelled and paid orders refunded.');">
+                                <button type="submit" class="btn btn-outline-danger">Cancel event</button>
+                            </form>
+                        }
+                        <form asp-action="Delete" asp-route-id="@Model.Event.Id" method="post" onsubmit="return confirm('Delete this event? This cannot be undone.');">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-header bg-white fw-semibold">Reviews</div>
+            <div class="card-body">
+                @if (Model.Event.Reviews.Count == 0)
+                {
+                    <p class="text-muted mb-0">No reviews yet.</p>
+                }
+                else
+                {
+                    foreach (var review in Model.Event.Reviews)
+                    {
+                        <div class="review-card ps-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>@review.CustomerName</strong>
+                                <span class="rating-stars">
+                                    @for (var star = 1; star <= 5; star++)
+                                    {
+                                        <text>@(star <= review.Rating ? "★" : "☆")</text>
+                                    }
+                                </span>
+                            </div>
+                            <div class="text-muted small">@review.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</div>
+                            @if (!string.IsNullOrWhiteSpace(review.Comment))
+                            {
+                                <p class="mb-0 mt-1">@review.Comment</p>
+                            }
+                        </div>
+                    }
+                }
+
+                @if (Model.CanReview)
+                {
+                    <hr />
+                    <h6>Write a review</h6>
+                    <form asp-action="Review" asp-route-id="@Model.Event.Id" method="post">
+                        <div class="mb-2">
+                            <label class="form-label" for="rating">Rating</label>
+                            <select name="rating" id="rating" class="form-select">
+                                @for (var value = 5; value >= 1; value--)
+                                {
+                                    <option value="@value">@value ★</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label" for="comment">Comment</label>
+                            <textarea name="comment" id="comment" class="form-control" rows="3" maxlength="2000"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit review</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white fw-semibold">Tickets</div>
+            <div class="card-body">
+                @if (Model.Event.Status == EventStatus.Cancelled)
+                {
+                    <div class="alert alert-danger mb-0">This event was cancelled. Pending orders were cancelled and paid orders were refunded.</div>
+                }
+                else if (Model.Event.Status != EventStatus.Published)
+                {
+                    <div class="alert alert-warning mb-0">This event is not on sale.</div>
+                }
+                else if (User.IsInRole("Customer"))
+                {
+                    <partial name="_BuyForm" model="Model.Buy" />
+                }
+                else if (User.Identity?.IsAuthenticated == true)
+                {
+                    <p class="text-muted mb-0">Only customers can buy tickets.</p>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">
+                        Please
+                        <a asp-controller="Account" asp-action="Login"
+                           asp-route-returnUrl="@Url.Action("Details", "Events", new { id = Model.Event.Id })">log in</a>
+                        to buy tickets.
+                    </p>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mt-4">
+            <div class="card-header bg-white fw-semibold">Event details</div>
+            <div class="card-body small">
+                <dl class="row mb-0">
+                    <dt class="col-5">Starts</dt>
+                    <dd class="col-7">@Model.Event.StartsAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
+                    @if (Model.Event.EndsAt is not null)
+                    {
+                        <dt class="col-5">Ends</dt>
+                        <dd class="col-7">@Model.Event.EndsAt.Value.ToLocalTime().ToString("dd MMM yyyy HH:mm")</dd>
+                    }
+                    <dt class="col-5">Venue</dt>
+                    <dd class="col-7">@Model.Event.VenueName</dd>
+                    <dt class="col-5">City</dt>
+                    <dd class="col-7">@Model.Event.City</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>

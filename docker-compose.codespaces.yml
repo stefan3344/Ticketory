@@ -1,0 +1,15 @@
+services:
+  nginx-codespaces:
+    image: nginx:1.27-alpine
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx/nginx.codespaces.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      api-1:
+        condition: service_healthy
+      api-2:
+        condition: service_healthy
+    networks:
+      - edge
+    restart: unless-stopped

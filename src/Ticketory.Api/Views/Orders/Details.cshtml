@@ -1,0 +1,129 @@
+@model OrderDto
+@{
+    ViewData["Title"] = "Order details";
+    var badge = Model.Status switch
+    {
+        OrderStatus.Paid => "bg-success",
+        OrderStatus.Pending => "bg-warning text-dark",
+        OrderStatus.Failed => "bg-danger",
+        OrderStatus.Cancelled => "bg-secondary",
+        OrderStatus.Refunded => "bg-info",
+        _ => "bg-info"
+    };
+}
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+        <h1 class="h3 mb-1">Order <code>@Model.Id.ToString()[..8]</code></h1>
+        <p class="text-muted mb-0">
+            Placed @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+            @if (Model.PaidAt is not null)
+            {
+                <text> · Paid @Model.PaidAt.Value.ToLocalTime().ToString("dd MMM yyyy HH:mm")</text>
+            }
+        </p>
+    </div>
+    <span class="badge fs-6 @badge">@Model.Status</span>
+</div>
+
+@if (Model.Status == OrderStatus.Failed && !string.IsNullOrWhiteSpace(Model.FailureReason))
+{
+    <div class="alert alert-danger">Payment failed: @Model.FailureReason</div>
+}
+
+@if (Model.Status == OrderStatus.Cancelled && Model.CancelledAt is not null)
+{
+    <div class="alert alert-secondary">
+        Order cancelled on @Model.CancelledAt.Value.ToLocalTime().ToString("dd MMM yyyy HH:mm").
+        @if (!string.IsNullOrWhiteSpace(Model.CancellationReason))
+        {
+            <text>Reason: @Model.CancellationReason</text>
+        }
+    </div>
+}
+
+@if (Model.Status == OrderStatus.Refunded && Model.RefundedAt is not null)
+{
+    <div class="alert alert-info">
+        Order refunded on @Model.RefundedAt.Value.ToLocalTime().ToString("dd MMM yyyy HH:mm").
+        @if (!string.IsNullOrWhiteSpace(Model.RefundReason))
+        {
+            <text>Reason: @Model.RefundReason</text>
+        }
+    </div>
+}
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white fw-semibold">Items</div>
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Event</th>
+                    <th>Ticket type</th>
+                    <th>Quantity</th>
+                    <th>Unit price</th>
+                    <th class="text-end">Line total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.EventTitle</td>
+                        <td>@item.TicketTypeName</td>
+                        <td>@item.Quantity</td>
+                        <td>€@item.UnitPrice.ToString("0.00")</td>
+                        <td class="text-end">€@item.LineTotal.ToString("0.00")</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="fw-bold">
+                    <td colspan="4" class="text-end">Total</td>
+                    <td class="text-end">€@Model.TotalAmount.ToString("0.00")</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mt-4">
+    <div class="card-header bg-white fw-semibold">Tickets</div>
+    <div class="card-body">
+        @if (Model.Tickets.Count == 0)
+        {
+            <p class="text-muted mb-0">Tickets will appear here after payment.</p>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <div class="col-md-6">
+                        <div class="border rounded p-3 d-flex gap-3 h-100">
+                            <img class="qr-image" src="@Url.Action("Qr", "Tickets", new { code = ticket.Code })" alt="QR code for @ticket.Code" />
+                            <div>
+                                <div class="fw-semibold">@ticket.TicketTypeName</div>
+                                <div class="text-muted small">@ticket.EventTitle</div>
+                                <div class="small">@ticket.StartsAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")</div>
+                                <code class="small d-block my-1">@ticket.Code</code>
+                                <span class="badge @(ticket.Status == TicketStatus.Issued ? "bg-success" : ticket.Status == TicketStatus.CheckedIn ? "bg-info" : "bg-secondary")">@ticket.Status</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<div class="d-flex gap-2 mt-3">
+    <a class="btn btn-outline-secondary" asp-action="Index">Back to orders</a>
+    @if (Model.Status == OrderStatus.Pending)
+    {
+        <form asp-action="Cancel" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Cancel this order?');">
+            <button type="submit" class="btn btn-outline-danger">Cancel order</button>
+        </form>
+    }
+</div>

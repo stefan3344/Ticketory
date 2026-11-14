@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Ticketory.Api/Ticketory.Api.csproj" />
+    <Project Path="src/Ticketory.Application/Ticketory.Application.csproj" />
+    <Project Path="src/Ticketory.Domain/Ticketory.Domain.csproj" />
+    <Project Path="src/Ticketory.Infrastructure/Ticketory.Infrastructure.csproj" />
+    <Project Path="src/Ticketory.Tests/Ticketory.Tests.csproj" />
+    <Project Path="src/Ticketory.Worker/Ticketory.Worker.csproj" />
+  </Folder>
+</Solution>

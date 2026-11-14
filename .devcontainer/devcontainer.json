@@ -1,0 +1,40 @@
+{
+  "name": "Ticketory",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "moby": false,
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "10.0"
+    }
+  },
+  "forwardPorts": [8080, 3000, 9090, 15672, 8025, 8888],
+  "portsAttributes": {
+    "8080": {
+      "label": "Ticketory UI",
+      "onAutoForward": "openBrowser"
+    },
+    "3000": {
+      "label": "Grafana"
+    },
+    "9090": {
+      "label": "Prometheus"
+    },
+    "15672": {
+      "label": "RabbitMQ Management"
+    },
+    "8025": {
+      "label": "Mailpit"
+    },
+    "8888": {
+      "label": "Dozzle"
+    }
+  },
+  "postCreateCommand": "cp -n .env.example .env || true",
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb"
+  }
+}

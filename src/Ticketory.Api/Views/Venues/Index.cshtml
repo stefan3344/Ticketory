@@ -1,0 +1,50 @@
+@model IReadOnlyList<VenueDto>
+@{
+    ViewData["Title"] = "Venues";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Venues</h1>
+    <a class="btn btn-primary" asp-action="Create">Add venue</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">No venues yet.</div>
+}
+else
+{
+    <div class="table-responsive card shadow-sm border-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Capacity</th>
+                    <th>Events</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var venue in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@venue.Name</td>
+                        <td>@venue.Address</td>
+                        <td>@venue.City</td>
+                        <td>@venue.Capacity</td>
+                        <td>@venue.EventCount</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@venue.Id">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@venue.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('Delete this venue?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

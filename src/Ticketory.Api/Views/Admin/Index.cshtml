@@ -1,0 +1,80 @@
+@model DashboardStatsDto
+@inject IOptions<ExternalToolsOptions> ExternalTools
+@{
+    ViewData["Title"] = "Admin dashboard";
+}
+
+<h1 class="h3 mb-3">Admin dashboard</h1>
+
+<div class="row g-3">
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Events</div>
+                <div class="display-6 fw-bold">@Model.Events</div>
+                <div class="small text-muted">@Model.PublishedEvents published</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Orders</div>
+                <div class="display-6 fw-bold">@Model.Orders</div>
+                <div class="small text-muted">
+                    @Model.PaidOrders paid
+                    @if (Model.RefundedOrders > 0)
+                    {
+                        <text> · @Model.RefundedOrders refunded</text>
+                    }
+                    @if (Model.CancelledOrders > 0)
+                    {
+                        <text> · @Model.CancelledOrders cancelled</text>
+                    }
+                    @if (Model.PendingOrders > 0)
+                    {
+                        <text> · @Model.PendingOrders pending</text>
+                    }
+                    @if (Model.FailedOrders > 0)
+                    {
+                        <text> · @Model.FailedOrders failed</text>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Net revenue</div>
+                <div class="display-6 fw-bold">€@Model.Revenue.ToString("0.00")</div>
+                <div class="small text-muted">Gross €@Model.GrossRevenue.ToString("0.00") · Refunded €@Model.RefundedRevenue.ToString("0.00")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small text-uppercase">Tickets</div>
+                <div class="display-6 fw-bold">@Model.TicketsActive</div>
+                <div class="small text-muted">@Model.TicketsIssued issued · @Model.TicketsCancelled cancelled</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 mt-4">
+    <div class="card-header bg-white fw-semibold">Monitoring and tools</div>
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-4"><a class="btn btn-outline-primary w-100" href="@ExternalTools.Value.GrafanaUrl" target="_blank" rel="noopener">Grafana dashboards</a></div>
+            <div class="col-md-4"><a class="btn btn-outline-primary w-100" href="@ExternalTools.Value.DozzleUrl" target="_blank" rel="noopener">Dozzle container logs</a></div>
+            <div class="col-md-4"><a class="btn btn-outline-primary w-100" href="@ExternalTools.Value.RabbitMqUrl" target="_blank" rel="noopener">RabbitMQ management</a></div>
+            <div class="col-md-4"><a class="btn btn-outline-secondary w-100" href="@ExternalTools.Value.PrometheusUrl" target="_blank" rel="noopener">Prometheus</a></div>
+            <div class="col-md-4"><a class="btn btn-outline-secondary w-100" href="@ExternalTools.Value.MailpitUrl" target="_blank" rel="noopener">Mailpit</a></div>
+            <div class="col-md-4"><a class="btn btn-outline-secondary w-100" href="~/swagger" target="_blank" rel="noopener">Swagger / REST API</a></div>
+            <div class="col-md-4"><a class="btn btn-outline-secondary w-100" asp-controller="Admin" asp-action="Messages">Outbox messages <span class="badge text-bg-secondary">@Model.PendingOutbox</span></a></div>
+            <div class="col-md-4"><a class="btn btn-outline-secondary w-100" href="~/health/ready" target="_blank" rel="noopener">Readiness health check</a></div>
+        </div>
+    </div>
+</div>

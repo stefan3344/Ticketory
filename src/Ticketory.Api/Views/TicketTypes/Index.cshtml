@@ -1,0 +1,57 @@
+@model IReadOnlyList<TicketTypeDto>
+@{
+    ViewData["Title"] = "Ticket types";
+    var eventId = (Guid)ViewBag.EventId;
+    var eventTitle = (string)ViewBag.EventTitle;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-0">Ticket types</h1>
+        <p class="text-muted mb-0">@eventTitle</p>
+    </div>
+    <div>
+        <a class="btn btn-primary" asp-action="Create" asp-route-eventId="@eventId">Add ticket type</a>
+        <a class="btn btn-outline-secondary" asp-controller="Events" asp-action="Details" asp-route-id="@eventId">Back to event</a>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">No ticket types yet. Add at least one before publishing the event.</div>
+}
+else
+{
+    <div class="table-responsive card shadow-sm border-0">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Capacity</th>
+                    <th>Available</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ticketType in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">@ticketType.Name</td>
+                        <td>€@ticketType.Price.ToString("0.00")</td>
+                        <td>@ticketType.Capacity</td>
+                        <td>@ticketType.Available</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit"
+                               asp-route-id="@ticketType.Id" asp-route-eventId="@eventId">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@ticketType.Id" asp-route-eventId="@eventId"
+                                  method="post" class="d-inline" onsubmit="return confirm('Delete this ticket type?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,49 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+.hero {
+    background: linear-gradient(135deg, #1d3557 0%, #457b9d 55%, #e63946 130%);
+}
+
+.event-cover {
+    height: 180px;
+    object-fit: cover;
+}
+
+.rating-stars {
+    color: #f4a261;
+    letter-spacing: 1px;
+}
+
+.review-card {
+    border-left: 3px solid #457b9d;
+}
+
+.pre-line {
+    white-space: pre-line;
+}
+
+.qr-image {
+    width: 130px;
+    height: 130px;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+}

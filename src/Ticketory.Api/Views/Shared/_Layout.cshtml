@@ -1,0 +1,114 @@
+﻿@inject IOptions<ExternalToolsOptions> ExternalTools
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ticketory</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">Ticketory</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Events</a>
+                    </li>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Orders" asp-action="Index">My orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Tickets" asp-action="Index">My tickets</a>
+                        </li>
+                    }
+                    @if (User.IsInRole("Organizer") || User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Events" asp-action="Manage">Manage events</a>
+                        </li>
+                    }
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Messages">Messages</a></li>
+                                <li><a class="dropdown-item" asp-controller="Venues" asp-action="Index">Venues</a></li>
+                                <li><a class="dropdown-item" asp-controller="Orders" asp-action="All">All orders</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" href="@ExternalTools.Value.GrafanaUrl" target="_blank" rel="noopener">Grafana</a></li>
+                                <li><a class="dropdown-item" href="@ExternalTools.Value.DozzleUrl" target="_blank" rel="noopener">Dozzle (logs)</a></li>
+                                <li><a class="dropdown-item" href="@ExternalTools.Value.RabbitMqUrl" target="_blank" rel="noopener">RabbitMQ</a></li>
+                                <li><a class="dropdown-item" href="@ExternalTools.Value.PrometheusUrl" target="_blank" rel="noopener">Prometheus</a></li>
+                                <li><a class="dropdown-item" href="@ExternalTools.Value.MailpitUrl" target="_blank" rel="noopener">Mailpit</a></li>
+                                <li><a class="dropdown-item" href="~/swagger" target="_blank" rel="noopener">REST API</a></li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+                <ul class="navbar-nav align-items-lg-center">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item d-flex align-items-center">
+                            <span class="navbar-text me-3">@User.GetDisplayName()</span>
+                        </li>
+                        <li class="nav-item d-flex align-items-center">
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-flex align-items-center">
+                                <button type="submit" class="btn btn-link nav-link text-white text-decoration-none">Log out</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Log in</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<main class="container py-4 flex-grow-1">
+    @if (TempData["Success"] is string success)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @success
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @RenderBody()
+</main>
+<footer class="border-top py-3 bg-white">
+    <div class="container d-flex flex-wrap justify-content-between gap-2 small text-muted">
+        <span>&copy; @DateTime.UtcNow.Year Ticketory</span>
+        <span>ASP.NET Core · PostgreSQL · Redis · RabbitMQ · Nginx</span>
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

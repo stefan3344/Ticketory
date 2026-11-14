@@ -1,0 +1,82 @@
+@startuml class-diagram-presentation
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontSize 13
+skinparam classFontSize 14
+skinparam classAttributeFontSize 12
+skinparam nodesep 16
+skinparam ranksep 24
+skinparam padding 2
+hide circle
+title Ticketory - domain model
+
+class ApplicationUser {
+  Id
+  Email
+  FullName
+}
+
+class Venue {
+  Id
+  Name
+  City
+}
+
+class Event {
+  Id
+  Title
+  StartsAt
+  Status
+}
+
+class TicketType {
+  Id
+  Name
+  Price
+  Capacity
+  Sold
+}
+
+class Order {
+  Id
+  Status
+  TotalAmount
+}
+
+class OrderItem {
+  Id
+  Quantity
+  UnitPrice
+}
+
+class Payment {
+  Id
+  Status
+  Amount
+}
+
+class Ticket {
+  Id
+  Code
+  Status
+}
+
+class EventReview {
+  Id
+  Rating
+  Comment
+}
+
+ApplicationUser "1" -- "0..*" Event : organizes
+ApplicationUser "1" -- "0..*" Order : places
+ApplicationUser "1" -- "0..*" EventReview : writes
+Venue "1" o-- "0..*" Event : hosts
+Event "1" *-- "1..*" TicketType : offers
+Event "1" *-- "0..*" EventReview : receives
+Order "1" *-- "1..*" OrderItem : contains
+Order "1" *-- "0..*" Ticket : issues
+Order "1" -- "0..1" Payment : has
+TicketType "1" -- "0..*" OrderItem : referenced by
+TicketType "1" -- "0..*" Ticket : defines
+
+@enduml
