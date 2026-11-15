@@ -408,8 +408,8 @@ Docker must be running: Testcontainers starts a `postgres:16-alpine` container f
 - [`docs/architecture.md`](docs/architecture.md) — component descriptions, configuration and startup.
 - [`docs/requirements-mapping.md`](docs/requirements-mapping.md) — mapping of every assignment requirement to the implementation.
 - [`docs/https-and-ha.md`](docs/https-and-ha.md) — HTTPS and OS-level HA explanation.
-- [`docs/presentation.md`](docs/presentation.md) — Marp presentation source (10 slides).
-- [`docs/presentation.html`](docs/presentation.html) — standalone HTML slide deck (loads the two SVG diagrams from `docs/`).
+- [`docs/presentation.md`](docs/presentation.md) — Marp presentation source (9 slides).
+- [`docs/presentation.html`](docs/presentation.html) — standalone HTML slide deck (loads the architecture diagram from `docs/`).
 - [`docs/presentation.pdf`](docs/presentation.pdf) — PDF export.
 
 > `presentation.md` is Marp Markdown. A plain Markdown preview will render the Marp YAML front matter as text; use `presentation.html` or `presentation.pdf` (or a Marp-aware preview) to view the slides.

@@ -38,18 +38,8 @@ A containerised, monitored and tested solution with two API replicas and asynchr
 - PostgreSQL: database and transactions
 - Redis: cache and fast data access
 - RabbitMQ: asynchronous order flow
-
----
-
-![bg left:60% fit](class-diagram-presentation.svg)
-
-## Domain model
-
-- `Venue` ◇— `Event` (aggregation)
-- `Event` ◆— `TicketType`, `EventReview` (composition)
-- `Order` ◆— `OrderItem`, `Ticket` (composition)
-- `Order` — `Payment`
-- `ApplicationUser` organizes events, places orders and writes reviews
+- Domain: `Venue` → `Event` → `TicketType`, `EventReview`.
+- `Order` → `OrderItem`, `Ticket`.
 
 ---
 
@@ -58,7 +48,7 @@ A containerised, monitored and tested solution with two API replicas and asynchr
 | Technology | Real purpose |
 |---|---|
 | ASP.NET Core MVC + Identity | CRUD UI, roles, secure cookies |
-| REST API + JWT | Integration surface, Swagger |
+| REST API + JWT | Integrations, Swagger |
 | PostgreSQL | Database and transactions |
 | Redis | Cache and fast data access |
 | RabbitMQ | Payment, ticket issuance, e-mail, retry/DLQ |

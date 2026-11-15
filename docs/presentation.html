@@ -14,7 +14,7 @@
 " lang="POSIX" data-marpit-pagination="1" style="--paginate:true;--theme:default;--style:section {
   font-size: 26px;
 }
-;" data-marpit-pagination-total="10" data-size="16:9">
+;" data-marpit-pagination-total="9" data-size="16:9">
 <h1 id="ticketory">Ticketory</h1>
 <h3 id="event-ticketing-with-aspnet-core-postgresql-redis-rabbitmq-and-nginx">Event ticketing with ASP.NET Core, PostgreSQL, Redis, RabbitMQ and Nginx</h3>
 <p>A containerised, monitored and tested solution with two API replicas and asynchronous ticket issuance.</p>
@@ -25,7 +25,7 @@
 " lang="POSIX" data-marpit-pagination="2" style="--paginate:true;--theme:default;--style:section {
   font-size: 26px;
 }
-;" data-marpit-pagination-total="10" data-size="16:9">
+;" data-marpit-pagination-total="9" data-size="16:9">
 <h2 id="the-problem">The problem</h2>
 <ul>
 <li>Customers need to browse events, reserve tickets and receive them immediately.</li>
@@ -41,56 +41,33 @@
 " lang="POSIX" data-marpit-pagination="3" style="--paginate:true;--theme:default;--style:section {
   font-size: 26px;
 }
-;--marpit-advanced-background-split:60%;" data-marpit-pagination-total="10" data-size="16:9" data-marpit-advanced-background="background" data-marpit-advanced-background-split="left"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;architecture.svg&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="40%" height="720" x="60%"><section id="3" data-paginate="true" data-theme="default" data-style="section {
+;--marpit-advanced-background-split:60%;" data-marpit-pagination-total="9" data-size="16:9" data-marpit-advanced-background="background" data-marpit-advanced-background-split="left"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;architecture.svg&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="40%" height="720" x="60%"><section id="3" data-paginate="true" data-theme="default" data-style="section {
   font-size: 26px;
 }
 " lang="POSIX" data-marpit-pagination="3" style="--paginate:true;--theme:default;--style:section {
   font-size: 26px;
 }
-;--marpit-advanced-background-split:60%;" data-marpit-pagination-total="10" data-size="16:9" data-marpit-advanced-background="content" data-marpit-advanced-background-split="left">
+;--marpit-advanced-background-split:60%;" data-marpit-pagination-total="9" data-size="16:9" data-marpit-advanced-background="content" data-marpit-advanced-background-split="left">
 <h2 id="architecture">Architecture</h2>
 <ul>
 <li>Nginx: HTTPS + load balancing</li>
 <li>PostgreSQL: database and transactions</li>
 <li>Redis: cache and fast data access</li>
 <li>RabbitMQ: asynchronous order flow</li>
+<li>Domain: <code>Venue</code> → <code>Event</code> → <code>TicketType</code>, <code>EventReview</code>.</li>
+<li><code>Order</code> → <code>OrderItem</code>, <code>Ticket</code>.</li>
 </ul>
 </section>
 </foreignObject><foreignObject width="1280" height="720" data-marpit-advanced-background="pseudo"><section data-paginate="true" data-theme="default" data-style="section {
   font-size: 26px;
 }
-" lang="POSIX" data-marpit-pagination="3" style="" data-marpit-pagination-total="10" data-size="16:9" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="left"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section data-paginate="true" data-theme="default" data-style="section {
+" lang="POSIX" data-marpit-pagination="3" style="" data-marpit-pagination-total="9" data-size="16:9" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="left"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="default" data-style="section {
   font-size: 26px;
 }
 " lang="POSIX" data-marpit-pagination="4" style="--paginate:true;--theme:default;--style:section {
   font-size: 26px;
 }
-;--marpit-advanced-background-split:60%;" data-marpit-pagination-total="10" data-size="16:9" data-marpit-advanced-background="background" data-marpit-advanced-background-split="left"><div data-marpit-advanced-background-container="true" data-marpit-advanced-background-direction="horizontal"><figure style="background-image:url(&quot;class-diagram-presentation.svg&quot;);background-size:contain;"></figure></div></section></foreignObject><foreignObject width="40%" height="720" x="60%"><section id="4" data-paginate="true" data-theme="default" data-style="section {
-  font-size: 26px;
-}
-" lang="POSIX" data-marpit-pagination="4" style="--paginate:true;--theme:default;--style:section {
-  font-size: 26px;
-}
-;--marpit-advanced-background-split:60%;" data-marpit-pagination-total="10" data-size="16:9" data-marpit-advanced-background="content" data-marpit-advanced-background-split="left">
-<h2 id="domain-model">Domain model</h2>
-<ul>
-<li><code>Venue</code> ◇— <code>Event</code> (aggregation)</li>
-<li><code>Event</code> ◆— <code>TicketType</code>, <code>EventReview</code> (composition)</li>
-<li><code>Order</code> ◆— <code>OrderItem</code>, <code>Ticket</code> (composition)</li>
-<li><code>Order</code> — <code>Payment</code></li>
-<li><code>ApplicationUser</code> organizes events, places orders and writes reviews</li>
-</ul>
-</section>
-</foreignObject><foreignObject width="1280" height="720" data-marpit-advanced-background="pseudo"><section data-paginate="true" data-theme="default" data-style="section {
-  font-size: 26px;
-}
-" lang="POSIX" data-marpit-pagination="4" style="" data-marpit-pagination-total="10" data-size="16:9" data-marpit-advanced-background="pseudo" data-marpit-advanced-background-split="left"></section></foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="default" data-style="section {
-  font-size: 26px;
-}
-" lang="POSIX" data-marpit-pagination="5" style="--paginate:true;--theme:default;--style:section {
-  font-size: 26px;
-}
-;" data-marpit-pagination-total="10" data-size="16:9">
+;" data-marpit-pagination-total="9" data-size="16:9">
 <h2 id="technology-choices">Technology choices</h2>
 <table>
 <thead>
@@ -106,7 +83,7 @@
 </tr>
 <tr>
 <td>REST API + JWT</td>
-<td>Integration surface, Swagger</td>
+<td>Integrations, Swagger</td>
 </tr>
 <tr>
 <td>PostgreSQL</td>
@@ -135,13 +112,13 @@
 </tbody>
 </table>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="default" data-style="section {
   font-size: 26px;
 }
-" lang="POSIX" data-marpit-pagination="6" style="--paginate:true;--theme:default;--style:section {
+" lang="POSIX" data-marpit-pagination="5" style="--paginate:true;--theme:default;--style:section {
   font-size: 26px;
 }
-;" data-marpit-pagination-total="10" data-size="16:9">
+;" data-marpit-pagination-total="9" data-size="16:9">
 <h2 id="asynchronous-order-flow">Asynchronous order flow</h2>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-text">Order created
   → outbox (same DB transaction)
@@ -159,13 +136,13 @@
 <li>Event cancellation → <code>order.cancelled</code> / <code>order.refunded</code> e-mails.</li>
 </ul>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="default" data-style="section {
   font-size: 26px;
 }
-" lang="POSIX" data-marpit-pagination="7" style="--paginate:true;--theme:default;--style:section {
+" lang="POSIX" data-marpit-pagination="6" style="--paginate:true;--theme:default;--style:section {
   font-size: 26px;
 }
-;" data-marpit-pagination-total="10" data-size="16:9">
+;" data-marpit-pagination-total="9" data-size="16:9">
 <h2 id="redis-and-postgresql-clear-responsibilities">Redis and PostgreSQL: clear responsibilities</h2>
 <p><strong>PostgreSQL</strong></p>
 <ul>
@@ -181,13 +158,13 @@
 <li>graceful degradation if Redis is down</li>
 </ul>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="default" data-style="section {
   font-size: 26px;
 }
-" lang="POSIX" data-marpit-pagination="8" style="--paginate:true;--theme:default;--style:section {
+" lang="POSIX" data-marpit-pagination="7" style="--paginate:true;--theme:default;--style:section {
   font-size: 26px;
 }
-;" data-marpit-pagination-total="10" data-size="16:9">
+;" data-marpit-pagination-total="9" data-size="16:9">
 <h2 id="https-load-balancing-and-high-availability">HTTPS, load balancing and high availability</h2>
 <ul>
 <li>Self-signed certificate with SAN for <code>localhost</code>, <code>ticketory.local</code>, <code>127.0.0.1</code>.</li>
@@ -196,13 +173,13 @@
 <li><code>X-Served-By</code> proves which replica served the request.</li>
 </ul>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="default" data-style="section {
   font-size: 26px;
 }
-" lang="POSIX" data-marpit-pagination="9" style="--paginate:true;--theme:default;--style:section {
+" lang="POSIX" data-marpit-pagination="8" style="--paginate:true;--theme:default;--style:section {
   font-size: 26px;
 }
-;" data-marpit-pagination-total="10" data-size="16:9">
+;" data-marpit-pagination-total="9" data-size="16:9">
 <h2 id="monitoring">Monitoring</h2>
 <ul>
 <li>Prometheus scrapes both APIs and all exporters.</li>
@@ -211,13 +188,13 @@
 <li>Admin → Messages shows the outbox history and payloads.</li>
 </ul>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="default" data-style="section {
   font-size: 26px;
 }
-" lang="POSIX" data-marpit-pagination="10" style="--paginate:true;--theme:default;--style:section {
+" lang="POSIX" data-marpit-pagination="9" style="--paginate:true;--theme:default;--style:section {
   font-size: 26px;
 }
-;" data-marpit-pagination-total="10" data-size="16:9">
+;" data-marpit-pagination-total="9" data-size="16:9">
 <h2 id="tests-and-demo">Tests and demo</h2>
 <ul>
 <li>37 xUnit tests: domain rules, <code>FakeTimeProvider</code>, refund/reopen, QR generation, outbox filtering, API integration with Testcontainers PostgreSQL.</li>
