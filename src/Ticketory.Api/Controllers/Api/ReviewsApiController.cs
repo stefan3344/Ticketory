@@ -2,15 +2,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Extensions;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Dtos;
-using Ticketory.Application.Services;
 using Ticketory.Domain.Common;
 
 namespace Ticketory.Api.Controllers.Api;
 
 [ApiController]
 [Route("api/events/{eventId:guid}/reviews")]
-public class ReviewsApiController(ReviewService reviewService) : ControllerBase
+public class ReviewsApiController(IReviewService reviewService) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]

@@ -2,18 +2,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Extensions;
 using Ticketory.Api.Models;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Dtos;
-using Ticketory.Application.Services;
 using Ticketory.Domain.Common;
 using Ticketory.Domain.Enums;
 
 namespace Ticketory.Api.Controllers;
 
 public class EventsController(
-    EventService eventService,
-    VenueService venueService,
-    OrderService orderService,
-    ReviewService reviewService,
+    IEventService eventService,
+    IVenueService venueService,
+    IOrderService orderService,
+    IReviewService reviewService,
     TimeProvider timeProvider) : Controller
 {
     [HttpGet]

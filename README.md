@@ -299,7 +299,7 @@ dotnet user-secrets --project src/Ticketory.Api set "Jwt:Secret" "..."
 ticketory/
 ├── src/
 │   ├── Ticketory.Domain/          # entities, enums, domain rules
-│   ├── Ticketory.Application/     # DTOs, abstractions, use-case services
+│   ├── Ticketory.Application/     # DTOs, abstractions, use-case services and interfaces
 │   ├── Ticketory.Infrastructure/  # EF Core, Identity, Redis, RabbitMQ, SMTP, QR
 │   ├── Ticketory.Api/             # MVC UI + REST API + health + metrics
 │   ├── Ticketory.Worker/          # outbox publisher + RabbitMQ consumers

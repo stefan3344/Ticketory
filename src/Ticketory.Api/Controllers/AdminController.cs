@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Models;
-using Ticketory.Application.Services;
+using Ticketory.Application.Abstractions.Services;
 
 namespace Ticketory.Api.Controllers;
 
 [Authorize(Policy = "AdminOnly")]
 public class AdminController(
-    StatsService statsService,
-    OutboxService outboxService) : Controller
+    IStatsService statsService,
+    IOutboxService outboxService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)

@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Extensions;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Dtos;
-using Ticketory.Application.Services;
 using Ticketory.Domain.Common;
 
 namespace Ticketory.Api.Controllers.Api;
@@ -11,7 +11,7 @@ namespace Ticketory.Api.Controllers.Api;
 [ApiController]
 [Route("api/orders")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class OrdersApiController(OrderService orderService) : ControllerBase
+public class OrdersApiController(IOrderService orderService) : ControllerBase
 {
     [HttpPost]
     [Authorize(

@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Extensions;
 using Ticketory.Application.Abstractions.Qr;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Dtos;
-using Ticketory.Application.Services;
 
 namespace Ticketory.Api.Controllers.Api;
 
@@ -12,7 +12,7 @@ namespace Ticketory.Api.Controllers.Api;
 [Route("api/tickets")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class TicketsApiController(
-    OrderService orderService,
+    IOrderService orderService,
     IQrCodeGenerator qrCodeGenerator) : ControllerBase
 {
     [HttpGet]

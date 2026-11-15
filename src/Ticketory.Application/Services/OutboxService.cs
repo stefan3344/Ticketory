@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Ticketory.Application.Abstractions.Persistence;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Common;
 using Ticketory.Application.Dtos;
 
 namespace Ticketory.Application.Services;
 
-public sealed class OutboxService(IAppDbContext db)
+public sealed class OutboxService(IAppDbContext db) : IOutboxService
 {
     public async Task<PagedResult<OutboxMessageDto>> GetMessagesAsync(
         string? type,

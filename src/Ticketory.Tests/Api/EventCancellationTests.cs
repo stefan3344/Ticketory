@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Ticketory.Application.Common;
 using Ticketory.Application.Contracts;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Dtos;
-using Ticketory.Application.Services;
 using Ticketory.Domain.Entities;
 using Ticketory.Domain.Enums;
 using Ticketory.Infrastructure.Persistence;
@@ -132,7 +132,7 @@ public class EventCancellationTests
             using (var statsScope = factory.Services.CreateScope())
             {
                 var stats = await statsScope.ServiceProvider
-                    .GetRequiredService<StatsService>()
+                    .GetRequiredService<IStatsService>()
                     .GetDashboardStatsAsync();
 
                 stats.Orders.Should().Be(2);

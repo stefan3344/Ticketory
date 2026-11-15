@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Ticketory.Application.Abstractions.Caching;
 using Ticketory.Application.Abstractions.Identity;
 using Ticketory.Application.Abstractions.Persistence;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Common;
 using Ticketory.Application.Contracts;
 using Ticketory.Application.Dtos;
@@ -21,7 +22,7 @@ public sealed class EventService(
     IUserDirectory userDirectory,
     TimeProvider timeProvider,
     IOptions<CacheOptions> cacheOptions,
-    ILogger<EventService> logger)
+    ILogger<EventService> logger) : IEventService
 {
     private DateTime UtcNow => timeProvider.GetUtcNow().UtcDateTime;
     private TimeSpan ListCacheTtl => TimeSpan.FromSeconds(cacheOptions.Value.EventListTtlSeconds);

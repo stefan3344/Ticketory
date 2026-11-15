@@ -2,16 +2,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Extensions;
 using Ticketory.Api.Models;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Dtos;
-using Ticketory.Application.Services;
 using Ticketory.Domain.Common;
 
 namespace Ticketory.Api.Controllers;
 
 [Authorize(Policy = "OrganizerOrAdmin")]
 public class TicketTypesController(
-    TicketTypeService ticketTypeService,
-    EventService eventService) : Controller
+    ITicketTypeService ticketTypeService,
+    IEventService eventService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(Guid eventId, CancellationToken cancellationToken)

@@ -9,7 +9,7 @@ Ticketory is an event-ticketing application with a server-rendered UI and a REST
 The application follows a pragmatic layered structure:
 
 - **Domain** — entities and business rules, no infrastructure dependencies.
-- **Application** — DTOs, abstractions and use-case services.
+- **Application** — DTOs, abstractions and use-case services exposed through interfaces and injected via DI.
 - **Infrastructure** — EF Core, ASP.NET Core Identity, Redis, RabbitMQ, SMTP and QR generation.
 - **API** — MVC UI, REST API, health checks and metrics.
 - **Worker** — outbox publisher and RabbitMQ consumers.

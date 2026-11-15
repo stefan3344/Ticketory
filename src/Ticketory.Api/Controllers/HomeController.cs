@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Models;
-using Ticketory.Application.Services;
+using Ticketory.Application.Abstractions.Services;
 
 namespace Ticketory.Api.Controllers;
 
-public class HomeController(EventService eventService) : Controller
+public class HomeController(IEventService eventService) : Controller
 {
     public async Task<IActionResult> Index(string? search, int page = 1, CancellationToken cancellationToken = default)
     {

@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Models;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Dtos;
-using Ticketory.Application.Services;
 using Ticketory.Domain.Common;
 
 namespace Ticketory.Api.Controllers;
 
 [Authorize(Policy = "AdminOnly")]
-public class VenuesController(VenueService venueService) : Controller
+public class VenuesController(IVenueService venueService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)

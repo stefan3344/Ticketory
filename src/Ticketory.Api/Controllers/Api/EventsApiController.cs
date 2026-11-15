@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Extensions;
 using Ticketory.Application.Common;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Dtos;
-using Ticketory.Application.Services;
 using Ticketory.Domain.Common;
 
 namespace Ticketory.Api.Controllers.Api;
 
 [ApiController]
 [Route("api/events")]
-public class EventsApiController(EventService eventService) : ControllerBase
+public class EventsApiController(IEventService eventService) : ControllerBase
 {
     [HttpGet]
     [AllowAnonymous]

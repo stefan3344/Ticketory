@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Extensions;
 using Ticketory.Application.Abstractions.Qr;
-using Ticketory.Application.Services;
+using Ticketory.Application.Abstractions.Services;
 
 namespace Ticketory.Api.Controllers;
 
 [Authorize]
 public class TicketsController(
-    OrderService orderService,
+    IOrderService orderService,
     IQrCodeGenerator qrCodeGenerator) : Controller
 {
     [HttpGet]

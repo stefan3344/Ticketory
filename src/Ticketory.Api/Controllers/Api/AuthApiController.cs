@@ -12,7 +12,7 @@ namespace Ticketory.Api.Controllers.Api;
 [Route("api/auth")]
 public class AuthApiController(
     UserManager<ApplicationUser> userManager,
-    JwtTokenService tokenService) : ControllerBase
+    IJwtTokenService tokenService) : ControllerBase
 {
     [HttpPost("register")]
     [AllowAnonymous]

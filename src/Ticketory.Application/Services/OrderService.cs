@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Ticketory.Application.Abstractions.Caching;
 using Ticketory.Application.Abstractions.Identity;
 using Ticketory.Application.Abstractions.Persistence;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Common;
 using Ticketory.Application.Contracts;
 using Ticketory.Application.Dtos;
@@ -23,7 +24,7 @@ public sealed class OrderService(
     TimeProvider timeProvider,
     IOptions<LockOptions> lockOptions,
     IOptions<CacheOptions> cacheOptions,
-    ILogger<OrderService> logger)
+    ILogger<OrderService> logger) : IOrderService
 {
     private TimeSpan LockExpiry => TimeSpan.FromSeconds(lockOptions.Value.ExpirySeconds);
     private TimeSpan LockWait => TimeSpan.FromSeconds(lockOptions.Value.WaitSeconds);

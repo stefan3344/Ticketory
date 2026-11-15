@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Ticketory.Application.Abstractions.Caching;
 using Ticketory.Application.Abstractions.Persistence;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Common;
 using Ticketory.Application.Dtos;
 using Ticketory.Domain.Common;
@@ -12,7 +13,7 @@ namespace Ticketory.Application.Services;
 public sealed class ReviewService(
     IAppDbContext db,
     ICacheService cache,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider) : IReviewService
 {
     public async Task<IReadOnlyList<ReviewDto>> GetForEventAsync(
         Guid eventId,

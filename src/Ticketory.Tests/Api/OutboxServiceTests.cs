@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Ticketory.Application.Services;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Domain.Entities;
 using Ticketory.Infrastructure.Persistence;
 
@@ -39,7 +39,7 @@ public class OutboxServiceTests
 
             await db.SaveChangesAsync();
 
-            var service = scope.ServiceProvider.GetRequiredService<OutboxService>();
+            var service = scope.ServiceProvider.GetRequiredService<IOutboxService>();
 
             var all = await service.GetMessagesAsync(null, null, 1, 10);
             all.TotalCount.Should().Be(2);

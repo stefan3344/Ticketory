@@ -12,7 +12,7 @@ namespace Ticketory.Api.Services;
 
 public sealed class JwtTokenService(
     IOptions<JwtOptions> options,
-    UserManager<ApplicationUser> userManager)
+    UserManager<ApplicationUser> userManager) : IJwtTokenService
 {
     public async Task<AuthResponse> CreateTokenAsync(ApplicationUser user)
     {

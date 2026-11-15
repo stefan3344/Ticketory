@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Ticketory.Application.Abstractions.Caching;
 using Ticketory.Application.Abstractions.Persistence;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Application.Common;
 using Ticketory.Application.Dtos;
 using Ticketory.Application.Options;
@@ -13,7 +14,7 @@ namespace Ticketory.Application.Services;
 public sealed class VenueService(
     IAppDbContext db,
     ICacheService cache,
-    IOptions<CacheOptions> cacheOptions)
+    IOptions<CacheOptions> cacheOptions) : IVenueService
 {
     public async Task<IReadOnlyList<VenueDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {

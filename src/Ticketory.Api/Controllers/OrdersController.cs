@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ticketory.Api.Extensions;
-using Ticketory.Application.Services;
+using Ticketory.Application.Abstractions.Services;
 using Ticketory.Domain.Common;
 
 namespace Ticketory.Api.Controllers;
 
 [Authorize]
-public class OrdersController(OrderService orderService) : Controller
+public class OrdersController(IOrderService orderService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
