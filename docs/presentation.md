@@ -72,7 +72,6 @@ Order created
 ```
 
 - Outbox pattern avoids lost messages.
-- Idempotency prevents double payment/ticket issuance.
 - Retry queue (5 s) and dead-letter queue handle failures.
 - Event cancellation → `order.cancelled` / `order.refunded` e-mails.
 
